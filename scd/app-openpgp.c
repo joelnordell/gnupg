@@ -5327,6 +5327,9 @@ do_sign (app_t app, ctrl_t ctrl, const char *keyidstr, int hashalgo,
       wipe_and_free (pinvalue, pinlen);
     }
 
+  // Prompt to touch/ack the card.
+  if (opt.ack_prompt)
+    pincb (pincb_arg, _("--ack"), NULL);
 
   if (app->app_local->cardcap.ext_lc_le
       && app->app_local->keyattr[0].key_type == KEY_TYPE_RSA
@@ -5349,6 +5352,10 @@ do_sign (app_t app, ctrl_t ctrl, const char *keyidstr, int hashalgo,
       app->did_chv1 = 0;
       cache_pin (app, ctrl, 1, NULL);
     }
+
+  // Dismiss prompt after signing (or timing out)
+  if (opt.ack_prompt)
+    pincb (pincb_arg, NULL, NULL);
 
   return rc;
 }
@@ -5422,9 +5429,19 @@ do_auth (app_t app, ctrl_t ctrl, const char *keyidstr,
           exmode = 0;
           le_value = 0;
         }
+
+      // Prompt to touch/ack the card.
+      if (opt.ack_prompt)
+        pincb (pincb_arg, _("--ack"), NULL);
+
       rc = iso7816_internal_authenticate (app_get_slot (app), exmode,
                                           indata, indatalen, le_value,
                                           outdata, outdatalen);
+
+      // Dismiss prompt after authenticating (or timing out)
+      if (opt.ack_prompt)
+        pincb (pincb_arg, NULL, NULL);
+
       if (gpg_err_code (rc) == GPG_ERR_TIMEOUT)
         clear_chv_status (app, ctrl, 1);
     }
@@ -5617,10 +5634,19 @@ do_decipher (app_t app, ctrl_t ctrl, const char *keyidstr,
   else
     exmode = le_value = 0;
 
+  // Prompt to touch/ack the card.
+  if (opt.ack_prompt)
+    pincb (pincb_arg, _("--ack"), NULL);
+
   rc = iso7816_decipher (app_get_slot (app), exmode,
                          indata, indatalen, le_value, padind,
                          outdata, outdatalen);
   xfree (fixbuf);
+
+  // Dismiss prompt after deciphering (or timing out)
+  if (opt.ack_prompt)
+    pincb (pincb_arg, NULL, NULL);
+
   if (!rc && app->app_local->keyattr[1].key_type == KEY_TYPE_ECC)
     {
       unsigned char prefix = 0;

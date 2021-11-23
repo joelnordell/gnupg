@@ -4649,6 +4649,9 @@ do_sign (app_t app, const char *keyidstr, int hashalgo,
       xfree (pinvalue);
     }
 
+  /* Prompt to touch/ack the card. */
+  if (opt.ack_prompt)
+    pincb (pincb_arg, _("--ack"), NULL);
 
   if (app->app_local->cardcap.ext_lc_le
       && app->app_local->keyattr[0].key_type == KEY_TYPE_RSA
@@ -4666,6 +4669,10 @@ do_sign (app_t app, const char *keyidstr, int hashalgo,
                            outdata, outdatalen);
   if (!rc && app->force_chv1)
     app->did_chv1 = 0;
+
+  /* Dismiss prompt after signing (or timing out) */
+  if (opt.ack_prompt)
+    pincb (pincb_arg, NULL, NULL);
 
   return rc;
 }
@@ -4739,6 +4746,11 @@ do_auth (app_t app, const char *keyidstr,
           exmode = 0;
           le_value = 0;
         }
+
+      /* Prompt to touch/ack the card. */
+      if (opt.ack_prompt)
+        pincb (pincb_arg, _("--ack"), NULL);
+
       rc = iso7816_internal_authenticate (app->slot, exmode,
                                           indata, indatalen, le_value,
                                           outdata, outdatalen);
@@ -4931,6 +4943,10 @@ do_decipher (app_t app, const char *keyidstr,
     }
   else
     exmode = le_value = 0;
+
+  /* Prompt to touch/ack the card. */
+  if (opt.ack_prompt)
+    pincb (pincb_arg, _("--ack"), NULL);
 
   rc = iso7816_decipher (app->slot, exmode,
                          indata, indatalen, le_value, padind,

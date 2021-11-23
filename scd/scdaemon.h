@@ -58,6 +58,7 @@ struct
   int disable_ccid;    /* Disable the use of the internal CCID driver. */
   int disable_pinpad;  /* Do not use a pinpad. */
   int enable_pinpad_varlen;  /* Use variable length input for pinpad. */
+  int ack_prompt;      /* Display ACK prompt to user when waiting for card. */
   int allow_admin;     /* Allow the use of admin commands for certain
                           cards. */
   strlist_t disabled_applications;  /* Card applications we do not

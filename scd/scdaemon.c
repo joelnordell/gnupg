@@ -100,6 +100,7 @@ enum cmd_and_opt_values
   oAllowAdmin,
   oDenyAdmin,
   oDisableApplication,
+  oAckPrompt,
   oEnablePinpadVarlen,
   oListenBacklog,
 
@@ -153,6 +154,7 @@ static ARGPARSE_OPTS opts[] = {
   ARGPARSE_s_n (oDisablePinpad, "disable-pinpad",
                 N_("do not use a reader's pinpad")),
   ARGPARSE_ignore (300, "disable-keypad"),
+  ARGPARSE_s_n (oAckPrompt, "ack-prompt", N_("display ACK prompt while waiting for card")),
 
   ARGPARSE_s_n (oAllowAdmin, "allow-admin", "@"),
   ARGPARSE_s_n (oDenyAdmin, "deny-admin",
@@ -591,6 +593,8 @@ main (int argc, char **argv )
         case oDisableOpenSC: break;
 
         case oDisablePinpad: opt.disable_pinpad = 1; break;
+
+        case oAckPrompt: opt.ack_prompt = 1; break;
 
         case oAllowAdmin: /* Dummy because allow is now the default.  */
           break;

@@ -102,6 +102,7 @@ enum cmd_and_opt_values
   oDenyAdmin,
   oDisableApplication,
   oApplicationPriority,
+  oAckPrompt,
   oEnablePinpadVarlen,
   oListenBacklog
 };
@@ -170,6 +171,7 @@ static gpgrt_opt_t opts[] = {
   ARGPARSE_s_s (oDisableApplication, "disable-application", "@"),
   ARGPARSE_s_s (oApplicationPriority, "application-priority",
                 N_("|LIST|change the application priority to LIST")),
+  ARGPARSE_s_n (oAckPrompt, "ack-prompt", N_("display ACK prompt while waiting for card")),
   ARGPARSE_s_i (oListenBacklog, "listen-backlog", "@"),
 
 
@@ -609,6 +611,8 @@ main (int argc, char **argv )
         case oDisableOpenSC: break;
 
         case oDisablePinpad: opt.disable_pinpad = 1; break;
+
+        case oAckPrompt: opt.ack_prompt = 1; break;
 
         case oAllowAdmin: /* Dummy because allow is now the default.  */
           break;
